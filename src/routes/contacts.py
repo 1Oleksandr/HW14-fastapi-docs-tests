@@ -181,9 +181,6 @@ async def create_contact(body: ContactSchema, db: AsyncSession = Depends(get_db)
 @router.put("/{contact_id}")
 async def update_contact(body: ContactUpdateSchema, contact_id: int = Path(ge=1), 
                          db: AsyncSession = Depends(get_db), user: User = Depends(auth_service.get_current_user)):
-    # email_check = await repositories_contacts.get_contact_by_email(body.email, db)
-    # if email_check is not None:
-    #         raise HTTPException(status_code=400, detail="Email not unique")
     """
     The update_contact function updates a contact in the database.
     It takes an id, and a body containing the updated information for that contact.
@@ -197,7 +194,7 @@ async def update_contact(body: ContactUpdateSchema, contact_id: int = Path(ge=1)
     :doc-author: Trelent
     """
     try:
-        contact = await repositories_contacts.update_contact(contact_id, body, db)
+        contact = await repositories_contacts.update_contact(contact_id, body, db, user)
         if contact is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="NOT FOUND")
     except:
@@ -220,5 +217,5 @@ async def delete_contact(contact_id: int = Path(ge=1),
     :return: An object of type contact
     :doc-author: Trelent
     """
-    contact = await repositories_contacts.delete_contact(contact_id, db)
+    contact = await repositories_contacts.delete_contact(contact_id, db, user)
     return contact

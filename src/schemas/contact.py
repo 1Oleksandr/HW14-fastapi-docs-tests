@@ -2,7 +2,7 @@ import re
 from typing import Optional
 from datetime import datetime, date
 
-from pydantic import BaseModel, EmailStr, Field, validator
+from pydantic import BaseModel, EmailStr, Field, ConfigDict, validator
 
 
 class ContactSchema(BaseModel):
@@ -11,7 +11,7 @@ class ContactSchema(BaseModel):
     email: EmailStr = Field(max_length=80)
     birthday: Optional[date] = Field(None)
     phone:  Optional[str] = Field(max_length=20)
-    info: Optional[str] = Field(max_length=200)
+    info: Optional[str] = Field(max_length=200, default=None)
     
     @validator("phone")
     def phone_number(cls, phone_num):
@@ -23,7 +23,7 @@ class ContactSchema(BaseModel):
     
 
 class ContactUpdateSchema(ContactSchema):
-    created_at: datetime
+    created_at: datetime = Field(default=datetime.now())
 
 class ContactResponse(BaseModel):
     id: int = 1
@@ -32,7 +32,9 @@ class ContactResponse(BaseModel):
     email: EmailStr
     birthday: date
     phone: str
-    info: str
+    info: str | None
+    
+    model_config = ConfigDict(from_attributes = True)  # noqa
 
-    class Config:
-        from_attributes = True
+    # class Config:
+    #     from_attributes = True

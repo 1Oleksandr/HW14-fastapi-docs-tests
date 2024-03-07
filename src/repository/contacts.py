@@ -156,7 +156,12 @@ async def update_contact(contact_id: int, body: ContactUpdateSchema, db: AsyncSe
     stmt = select(Contact).filter_by(id=contact_id, user = user)
     result = await db.execute(stmt)
     contact = result.scalar_one_or_none()
+    print(contact.user_id)
+    new_contact = Contact(id=contact_id, **body.model_dump(exclude_unset=True), user_id = contact.user_id)
+    print(new_contact.user_id)
+    print(contact.id)
     if contact:
+        # contact = new_contact
         contact.name = body.name
         contact.surname = body.surname
         contact.email = body.email

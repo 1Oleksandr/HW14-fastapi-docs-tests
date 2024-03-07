@@ -135,7 +135,7 @@ class Auth:
             if user is None:
                 raise credentials_exception
             self.cache.set(user_hash, pickle.dumps(user))
-            self.cache.expire(user_hash, 300)
+            self.cache.expire(user_hash, 60)
         else:
             print("User from cache")
             user = pickle.loads(user)

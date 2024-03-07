@@ -1,7 +1,7 @@
 import uuid
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 from src.models.models import Role
 
@@ -16,10 +16,13 @@ class UserResponse(BaseModel):
     id: uuid.UUID
     username: str
     email: EmailStr
+    avatar: str | None
     role: Role
+    
+    model_config = ConfigDict(from_attributes = True)  # noqa
 
-    class Config:
-        from_attributes = True
+    # class Config:
+    #     from_attributes = True
 
 
 class TokenSchema(BaseModel):
