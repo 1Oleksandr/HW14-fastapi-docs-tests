@@ -14,6 +14,7 @@ from src.database.db import get_db
 from src.routes import contacts, auth, users
 from src.conf.config import config
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     r = await redis.Redis(host=config.REDIS_DOMAIN, port=config.REDIS_PORT, db=0, 

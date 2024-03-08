@@ -1,3 +1,4 @@
+from os import environ
 import contextlib
 
 
@@ -5,6 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async
 from sqlalchemy.orm import DeclarativeBase
 
 from src.conf.config import config
+
+TESTING = environ.get("TESTING")
 
 class Base(DeclarativeBase):
     ...
@@ -26,8 +29,11 @@ class DatabaseSessionManager:
             await session.rollback()
         finally:
             await session.close()
-
-sessionmanager = DatabaseSessionManager(config.DB_URL)
+            
+if TESTING:
+    sessionmanager = DatabaseSessionManager(config.TEST_DB_URL)
+else:
+    sessionmanager = DatabaseSessionManager(config.DB_URL)
 
 # Dependency
 async def get_db():

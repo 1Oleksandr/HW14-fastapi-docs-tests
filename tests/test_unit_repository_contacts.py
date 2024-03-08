@@ -97,8 +97,9 @@ class TestContacts(unittest.IsolatedAsyncioTestCase):
     
     async def test_create_contact(self):
         body = ContactSchema(name="Bill", surname="Gates", email="bill@microsoft.com", phone="911012345678", birthday="1960-03-06")
+        contact = [Contact(name='Bill', surname='Gates', email='bill@microsoft.com', phone='911012345678', birthday='1960-03-06', user_id=self.user)]
         mocked_contact = MagicMock()
-        mocked_contact.scalar_one_or_none.return_value = None
+        mocked_contact.scalar_one_or_none.return_value = contact
         self.session.execute.return_value = mocked_contact
         result = await create_contact(body=body, db = self.session, user = self.user)
         self.session.add.assert_called_once()
@@ -110,19 +111,18 @@ class TestContacts(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result.birthday, body.birthday)    
         
     async def test_update_contact(self):
-        body = ContactUpdateSchema(name="Bill", surname="Gates", email="bill@microsoft.com", phone="911012345678", birthday="1962-03-06", created_at=datetime.now())
-        contact = [Contact(id=1, name='Bill', surname='Gates', email='bill@microsoft.com', phone='911012345678', birthday='1960-03-06', user_id=self.user)]
-        mocked_contact = MagicMock()
-        mocked_contact.scalar_one_or_none.return_value = contact
+        body = ContactUpdateSchema(name="Bill", surname="Gates", email="bill@microsoft.com", phone="911012345678", birthday="1962-03-06", info = "some info", created_at=datetime.now())
+        mocked_contact = MagicMock() 
+        mocked_contact.scalar_one_or_none.return_value = Contact(id=1, name='Bill', surname='Gates', email='bill@microsoft.com', phone='911012345678', birthday='1960-03-06', info = "some info", created_at=datetime.now(), user_id=self.user)
         self.session.execute.return_value = mocked_contact
         result = await update_contact(contact_id=1, body=body, db = self.session, user=self.user)
         self.session.execute.assert_called_once()
         self.session.commit.assert_called_once()
         self.assertEqual(result.name, body.name)
-        # self.assertEqual(result.surname, body.surname)
-        # self.assertEqual(result.email, body.email)
-        # self.assertEqual(result.phone, body.phone)
-        # self.assertEqual(result.birthday, body.birthday) 
+        self.assertEqual(result.surname, body.surname)
+        self.assertEqual(result.email, body.email)
+        self.assertEqual(result.phone, body.phone)
+        self.assertEqual(result.birthday, body.birthday) 
         
     async def test_delete_contact(self):
         contact = [Contact(id=2, name='Steave', surname='Jobs', email='steave@apple.com', phone='901012345678', birthday='1958-03-07', user_id=self.user)]

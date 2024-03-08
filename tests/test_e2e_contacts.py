@@ -25,9 +25,8 @@ def test_get_contacts(client, get_token, monkeypatch):
         assert response.status_code == 200, response.text
         data = response.json()
         assert len(data) == 0
-
-
-# def test_create_contact(client, get_token, monkeypatch):
+        
+# def test_get_all_contacts(client, get_token, monkeypatch):
 #     with patch.object(auth_service, 'cache') as redis_mock:
 #         redis_mock.get.return_value = None
 #         monkeypatch.setattr("fastapi_limiter.FastAPILimiter.redis", AsyncMock())
@@ -35,19 +34,33 @@ def test_get_contacts(client, get_token, monkeypatch):
 #         monkeypatch.setattr("fastapi_limiter.FastAPILimiter.http_callback", AsyncMock())
 #         token = get_token
 #         headers = {"Authorization": f"Bearer {token}"}
-#         response = client.post("/contacts", headers=headers, json={
-#             "name": "test",
-#             "surname": "test",
-#             "email": "gates@microsoft.com",
-#             "phone": "380504444567",
-#             "birthday": "2022-03-08",
-#             'info': 'test'
-#         })
-#         assert response.status_code == 201, response.text
+#         response = client.get("/all", headers=headers)
+#         assert response.status_code == 200, response.text
 #         data = response.json()
-#         assert "id" in data
-#         assert data["name"] == "test"
-#         assert data["surname"] == "test"
-#         assert data["email"] == "gates@microsoft.com"
-#         assert data["phone"] == "380504444567"
-#         assert data["birthday"] == "2022-03-08"
+#         assert len(data) == 0
+
+
+def test_create_contact(client, get_token, monkeypatch):
+    with patch.object(auth_service, 'cache') as redis_mock:
+        redis_mock.get.return_value = None
+        monkeypatch.setattr("fastapi_limiter.FastAPILimiter.redis", AsyncMock())
+        monkeypatch.setattr("fastapi_limiter.FastAPILimiter.identifier", AsyncMock())
+        monkeypatch.setattr("fastapi_limiter.FastAPILimiter.http_callback", AsyncMock())
+        token = get_token
+        headers = {"Authorization": f"Bearer {token}"}
+        response = client.post("/contacts", headers=headers, json={
+            "name": "test",
+            "surname": "test",
+            "email": "gates@microsoft.com",
+            "phone": "380504444567",
+            "birthday": "2022-03-08",
+            'info': 'test'
+        })
+        assert response.status_code == 201, response.text
+        data = response.json()
+        assert "id" in data
+        assert data["name"] == "test"
+        assert data["surname"] == "test"
+        assert data["email"] == "gates@microsoft.com"
+        assert data["phone"] == "380504444567"
+        assert data["birthday"] == "2022-03-08"
