@@ -1,16 +1,11 @@
 from unittest.mock import Mock, patch, AsyncMock
+from fastapi import Depends
 
 import pytest
 
 from src.services.auth import auth_service
-from src.models.models import Contact
-
-
-# @patch('src.models.models.Contact')
-# def test_class(MockClass):
-#     Contact()
-#     assert MockClass is Contact
-#     assert MockClass.called
+from src.models.models import Contact, Role
+from src.services.roles import RoleAccess
     
 
 def test_get_contacts(client, get_token, monkeypatch):
@@ -33,7 +28,7 @@ def test_get_contacts(client, get_token, monkeypatch):
 #         monkeypatch.setattr("fastapi_limiter.FastAPILimiter.identifier", AsyncMock())
 #         monkeypatch.setattr("fastapi_limiter.FastAPILimiter.http_callback", AsyncMock())
 #         token = get_token
-#         headers = {"Authorization": f"Bearer {token}"}
+#         headers = {"Authorization": f"Bearer {token}", "role": "admin"}
 #         response = client.get("/all", headers=headers)
 #         assert response.status_code == 200, response.text
 #         data = response.json()
