@@ -28,6 +28,7 @@ engine = create_async_engine(TEST_SQLALCHEMY_DATABASE_URL, poolclass=NullPool)
 TestingSessionLocal = async_sessionmaker(autocommit=False, autoflush=False, expire_on_commit=False, bind=engine)
 
 test_user = {"username": "Bill", "email": "gates@microsoft.com", "password": "33344455"}
+user_data = {"username": "Steve", "email": "jobs@gmail.com", "password": "66677788"}
     
 @pytest.fixture(scope="module", autouse=True)
 def init_models_wrap():
@@ -71,5 +72,5 @@ async def get_token():
 
 @pytest_asyncio.fixture()
 async def get_email_token():
-    token = auth_service.create_email_token(data={"sub": test_user["email"]})
+    token = auth_service.create_email_token(data={"sub": user_data["email"]})
     return token

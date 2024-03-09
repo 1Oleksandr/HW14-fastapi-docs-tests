@@ -20,19 +20,6 @@ def test_get_contacts(client, get_token, monkeypatch):
         assert response.status_code == 200, response.text
         data = response.json()
         assert len(data) == 0
-        
-# def test_get_all_contacts(client, get_token, monkeypatch):
-#     with patch.object(auth_service, 'cache') as redis_mock:
-#         redis_mock.get.return_value = None
-#         monkeypatch.setattr("fastapi_limiter.FastAPILimiter.redis", AsyncMock())
-#         monkeypatch.setattr("fastapi_limiter.FastAPILimiter.identifier", AsyncMock())
-#         monkeypatch.setattr("fastapi_limiter.FastAPILimiter.http_callback", AsyncMock())
-#         token = get_token
-#         headers = {"Authorization": f"Bearer {token}", "role": "admin"}
-#         response = client.get("/all", headers=headers)
-#         assert response.status_code == 200, response.text
-#         data = response.json()
-#         assert len(data) == 0
 
 
 def test_create_contact(client, get_token, monkeypatch):

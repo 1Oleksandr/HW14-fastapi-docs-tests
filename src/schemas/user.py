@@ -21,9 +21,6 @@ class UserResponse(BaseModel):
     
     model_config = ConfigDict(from_attributes = True)  # noqa
 
-    # class Config:
-    #     from_attributes = True
-
 
 class TokenSchema(BaseModel):
     access_token: str

@@ -133,14 +133,14 @@ async def request_email(body: RequestEmail, background_tasks: BackgroundTasks, r
     user = await repositories_users.get_user_by_email(body.email, db)
 
     if user.confirmed:
-        return {"message": "Your email is already confirmed"}
+        return {"message": messages.EMAIL_ALREADY_CONFIRMED}
     if user:
         background_tasks.add_task(send_email, user.email, user.username, str(request.base_url))
-    return {"message": "Check your email for confirmation."}
+    return {"message": messages.CHECK_EMAIL}
 
 @auth_router.post('/reset_password')
-async def reset_passw_email(body: RequestEmail, background_tasks: BackgroundTasks, request: Request,
-                        db: AsyncSession = Depends(get_db)):
+async def reset_passw_email(body: RequestEmail, background_tasks: BackgroundTasks, 
+                            request: Request, db: AsyncSession = Depends(get_db)):
     """
     The reset_passw_email function is used to send an email with a link to reset the password.
     The user must enter his email and if it exists, he will receive an email with a link that 
@@ -157,9 +157,9 @@ async def reset_passw_email(body: RequestEmail, background_tasks: BackgroundTask
 
     if user:
         background_tasks.add_task(send_reset_passw_email, user.email, user.username, str(request.base_url))
-        return {"message": "Check your email for update your password"}
+        return {"message": messages.CHECK_EMAIL_FOR_UPDATE_PASSWORD}
     else:
-        return {"message": "User with email doesn't exist"}
+        return {"message": messages.USER_WITH_EMAIL_NOT_EXIST}
     
 @auth_router.get('/form_reset_password/{token}')
 async def recieve_conf_reset_passw():
@@ -170,7 +170,7 @@ async def recieve_conf_reset_passw():
     :return: A dictionary with a message
     :doc-author: Trelent
     """
-    return {"message": "We recieved confirmation for update password"}
+    return {"message": messages.RECIVED_CONFIRMATION}
     
 @auth_router.post('/form_reset_password/{token}')
 async def confirmed_reset_passw(body: UserResetPassword, token: str, db: AsyncSession = Depends(get_db)):
@@ -189,9 +189,9 @@ async def confirmed_reset_passw(body: UserResetPassword, token: str, db: AsyncSe
     email = await auth_service.get_email_from_token(token)
     user = await repositories_users.get_user_by_email(email, db)
     if user is None:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Verification error")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=messages.VERIFICATION_ERROR)
     new_password = auth_service.get_password_hash(body.password2)
     if not auth_service.verify_password(body.password1, new_password):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Passwords are not the same")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=messages.DIFFERENT_PASSWORD)
     await repositories_users.update_password(user, new_password, db)
-    return {"message": "Password was updated successfully!"}
+    return {"message": messages.PASSWORD_UPDATE_SUCCESSFULLY}
