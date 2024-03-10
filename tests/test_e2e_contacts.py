@@ -1,12 +1,9 @@
 from unittest.mock import Mock, patch, AsyncMock
-from fastapi import Depends
 
 import pytest
 
 from src.services.auth import auth_service
-from src.models.models import Contact, Role
-from src.services.roles import RoleAccess
-    
+  
 
 def test_get_contacts(client, get_token, monkeypatch):
     with patch.object(auth_service, 'cache') as redis_mock:

@@ -101,7 +101,6 @@ def test_login_wrong_email(client):
     
 def test_confirmed_email_invalid_token(client, get_email_token):
     token = get_email_token
-    headers = {"Authorization": f"Bearer {token}"}
     response = client.get("api/auth/confirmed_email/{token}", 
                           headers={"Authorization": f"Bearer {token}"})
     assert response.status_code == 422, response.text
